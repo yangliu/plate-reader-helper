@@ -1,0 +1,21 @@
+{
+	"name": "platereader-tools",
+	"version": "0.0.1",
+	"author": "Yang Liu <i@yangliu.name>",
+	"description": "a series of scripts for processing the data from platereader",
+	"contributors": [
+		{"name": "Yang Liu", "email": "i@yangliu.name"}
+	],
+	"repository": {
+    	"type": "git",
+    	"url": "https://github.com/yangliu/plate-reader-helper.git"
+ 	},
+  	"keywords": [
+    	"cli"
+ 	],
+ 	"dependencies" : {
+    	"coffee-script"   :  "*",
+    	"excel": "*"
+ 	}
+
+}
