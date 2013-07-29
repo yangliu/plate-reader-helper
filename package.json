@@ -14,8 +14,9 @@
     	"cli"
  	],
  	"dependencies" : {
-    	"coffee-script"   :  "*",
-    	"excel": "*"
+    	"coffee-script"		: "*",
+    	"optimist"			: "*",
+    	"csv"				: "*"
  	}
 
 }
