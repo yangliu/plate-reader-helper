@@ -29,7 +29,7 @@ class PlateReaderHelper
 		@ready					= false
 		@error_msg				= []
 		@mode 					= 'kinetics'
-	
+
 	raise_error: (msg) ->
 		@error_msg.push msg
 
@@ -47,9 +47,15 @@ class PlateReaderHelper
 
 	set_datafile: (data_file) ->
 		fn = path.resolve data_file
-		fs.exists fn, (exists) ->
-			@datafile = if exists then fn else null
-			@raise_error "File #{data_file} does not exist." unless exists
+		exists = fs.existsSync fn
+		@datafile = if exists then fn else null
+		@raise_error "File #{data_file} does not exist." unless exists
+
+	set_outputfile: (output_file) ->
+		fn = path.resolve output_file
+		exists = fs.existsSync fn
+		@output = if exists then null else fn
+		@error "Output File #{output_file} has already existed." if exists
 
 	set_filetype: (filetype) ->
 		filetype = filetype.toLowerCase()
@@ -65,7 +71,6 @@ class PlateReaderHelper
 		error_exit() if self.has_error()
 		switch self.filetype
 			when 'csv', 'raw'
-				console.log self
 				fh = fs.createReadStream self.datafile
 				self.ready = true
 				cb(fh)
@@ -93,7 +98,14 @@ class PlateReaderHelper
 
 	_parsefile: (cb, self = @) ->
 		func_parsefile = (data_array) ->
-			# parse file array here
+			results = []
+			
+			switch self.mode
+				when 'kinetics'
+					
+				else
+					self.error "Unsupport mode!"
+
 			cb data_array
 
 		self._loadfile func_parsefile, self
@@ -107,8 +119,15 @@ class PlateReaderHelper
 				cb data
 			else
 				# output to csv file
-				# do it later
-				cb data
+				data_array = []
+				for row in data
+					data_array.push row.join(",")
+
+				fs.writeFile self.output, data_array.join("\n"), (err) ->
+					if err
+						self.error err
+					else
+						cb data
 
 		self._parsefile func_formatoutput, self
 
@@ -122,6 +141,7 @@ main = ->
 	prh = new PlateReaderHelper
 	prh.set_datafile argv.file
 	prh.set_filetype argv.filetype
+	prh.set_outputfile argv.output if argv.output
 	prh.set_mode argv.mode
 	prh.process()
 
