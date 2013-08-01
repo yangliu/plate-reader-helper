@@ -1,6 +1,6 @@
 {
 	"name": "platereader-tools",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"author": "Yang Liu <i@yangliu.name>",
 	"description": "a series of scripts for processing the data from platereader",
 	"contributors": [
