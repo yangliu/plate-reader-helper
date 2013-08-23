@@ -112,54 +112,46 @@ class PlateReaderHelper
 			_get_measurement_info = (col, s) ->
 				parameter_name = col[0].toLowerCase().trim().replace(/\s+/g, '-').replace(/:$/, '')
 				s.result[parameter_name] = col[5]
-				s._result['plate-well-range'] = []
-				s._result['plate-well-range']['x'] = []
-				s._result['plate-well-range']['y'] = []
 				switch parameter_name
 					when 'measurement-wavelength'
 						s.result[parameter_name] = [col[5], col[6]].join(' ')
 					when 'plate-definition-file'
 						s._result['plate-well-number'] = parseInt(s.result['plate-definition-file'].replace(/[^\d]/g,''))
-						s._result['plate-well-range']['x']['min'] = 1
-						s._result['plate-well-range']['y']['min'] = 1
 						switch s._result['plate-well-number']
 							when 6
 								s._result['plate-max-x'] = 3
 								s._result['plate-max-y'] = 2
-								s._result['plate-well-range']['x']['max'] = 3
-								s._result['plate-well-range']['y']['max'] = 2
 							when 12
 								s._result['plate-max-x'] = 4
 								s._result['plate-max-y'] = 3
-								s._result['plate-well-range']['x']['max'] = 4
-								s._result['plate-well-range']['y']['max'] = 3
 							when 24
 								s._result['plate-max-x'] = 6
 								s._result['plate-max-y'] = 4
-								s._result['plate-well-range']['x']['max'] = 6
-								s._result['plate-well-range']['y']['max'] = 4
 							when 48
 								s._result['plate-max-x'] = 8
 								s._result['plate-max-y'] = 6
-								s._result['plate-well-range']['x']['max'] = 8
-								s._result['plate-well-range']['y']['max'] = 6
 							when 96
 								s._result['plate-max-x'] = 12
 								s._result['plate-max-y'] = 8
-								s._result['plate-well-range']['x']['max'] = 12
-								s._result['plate-well-range']['y']['max'] = 8
 							when 384
 								s._result['plate-max-x'] = 24
 								s._result['plate-max-y'] = 16
-								s._result['plate-well-range']['x']['max'] = 24
-								s._result['plate-well-range']['y']['max'] = 16
 							else
 								s._result['plate-max-x'] = 0
 								s._result['plate-max-y'] = 0
-								s._result['plate-well-range']['x']['max'] = 0
-								s._result['plate-well-range']['y']['max'] = 0
+						unless s._result['plate-well-range']
+							s._result['plate-well-range'] = []
+							s._result['plate-well-range']['x'] = []
+							s._result['plate-well-range']['y'] = []
+							s._result['plate-well-range']['x']['min'] = 1
+							s._result['plate-well-range']['x']['max'] = s._result['plate-max-x']
+							s._result['plate-well-range']['y']['min'] = 1
+							s._result['plate-well-range']['y']['max'] = s._result['plate-max-y']
 					when 'part-of-the-plate'
 						[p_lt, p_rb] = s.result['part-of-the-plate'].split(' - ')
+						s._result['plate-well-range'] = []
+						s._result['plate-well-range']['x'] = []
+						s._result['plate-well-range']['y'] = []
 						s._result['plate-well-range']['x']['min'] = parseInt(p_lt.replace(/[^\d]/g,''))
 						s._result['plate-well-range']['x']['max'] = parseInt(p_rb.replace(/[^\d]/g,''))
 						s._result['plate-well-range']['y']['min'] = p_lt.replace(/\d/g,'').charCodeAt(0) - 'A'.charCodeAt(0)+1
